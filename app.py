@@ -24,8 +24,7 @@ def webhook():
 
 # Hàm gửi tin nhắn đến bot Telegram
 def send_message(chat_id, text):
-    url = f"https://api.telegram.org/bot7725120534:AAF_NpkDpwYx0b3ritpvvjM3LbaUPayvlCA
-/sendMessage"
+    url = f"https://api.telegram.org/bot7725120534:AAF_NpkDpwYx0b3ritpvvjM3LbaUPayvlCA/sendMessage"
     payload = {
         "chat_id": chat_id,
         "text": text
