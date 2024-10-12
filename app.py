@@ -47,7 +47,7 @@ def process_link(message):
     link = next((part for part in parts if part.startswith("https://s.shopee.vn")), None)
 
     if link is None:
-        return "Vui lòng nhập link bắt đầu bằng https://s.shopee.vn, những link khác gửi thẳng vào nhóm"
+        return "Vui lòng nhập link bắt đầu bằng https://s.shopee.vn, những link khác gửi thẳng vào nhóm => https://zalo.me/g/rycduw016"
 
     # Lấy link cuối cùng
     final_url = get_final_link(link)
