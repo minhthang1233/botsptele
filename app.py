@@ -9,7 +9,7 @@ import urllib.parse
 app = Flask(__name__)
 
 # Đăng ký token bot Telegram
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")  # Đặt token bot từ biến môi trường
+TELEGRAM_TOKEN = os.getenv("7725120534:AAF_NpkDpwYx0b3ritpvvjM3LbaUPayvlCA")  # Đặt token bot từ biến môi trường
 
 # Khởi tạo bot
 async def start(update: Update, context):
