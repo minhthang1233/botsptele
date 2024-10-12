@@ -47,7 +47,7 @@ def process_link(message):
     link = next((part for part in parts if part.startswith("https://s.shopee.vn")), None)
 
     if link is None:
-        return "Vui lòng nhập đúng link là link sản phẩm"
+        return "Vui lòng nhập link bắt đầu bằng https://s.shopee.vn, những link khác gửi thẳng vào nhóm"
 
     # Lấy link cuối cùng
     final_url = get_final_link(link)
@@ -56,7 +56,7 @@ def process_link(message):
     origin_link = final_url.split("?")[0]  # Bỏ đi các tham số sau '?'
     
     # Tạo liên kết cuối
-    result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17385530062&sub_id=1review"
+    result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17305270177&sub_id=huong"
     
     return f"{text} {result_link}"
 
