@@ -64,11 +64,12 @@ def process_message(message):
 def create_redirect_link(final_url):
     # Phân tích URL và loại bỏ các tham số không cần thiết
     parsed_url = urllib.parse.urlparse(final_url)
-    # Giữ lại tên miền và đường dẫn
+    
+    # Giữ lại tên miền
     origin_link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
-    # Tạo liên kết cuối
-    result_link = f"https://shope.ee/an_redir?origin_link={urllib.parse.quote(origin_link)}&affiliate_id=17385530062&sub_id=1review"
+    # Tạo liên kết cuối với đường dẫn được mã hóa
+    result_link = f"https://shope.ee/an_redir?origin_link={urllib.parse.quote(origin_link)}&affiliate_id=17305270177&sub_id=huong"
     return result_link
 
 # Hàm trích xuất liên kết từ tin nhắn
