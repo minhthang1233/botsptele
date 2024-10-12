@@ -31,15 +31,27 @@ def send_message(chat_id, text):
     }
     requests.post(url, json=payload)
 
+# Hàm lấy link cuối cùng từ URL
+def get_final_link(link):
+    try:
+        # Gửi yêu cầu để lấy link cuối
+        response = requests.get(link, allow_redirects=True)
+        return response.url  # Trả về link cuối cùng
+    except requests.exceptions.RequestException as e:
+        return str(e)  # Trả về lỗi nếu có
+
 # Hàm xử lý liên kết
 def process_link(link):
+    # Lấy link cuối cùng
+    final_url = get_final_link(link)
+
     # Mã hóa liên kết
-    encoded_link = urllib.parse.quote(link)
-    
+    encoded_link = urllib.parse.quote(final_url)
+
     # Tạo liên kết cuối
-    final_link = f"https://shope.ee/an_redir?origin_link={encoded_link}&affiliate_id=17385530062&sub_id=1review"
+    result_link = f"https://shope.ee/an_redir?origin_link={encoded_link}&affiliate_id=17385530062&sub_id=1review"
     
-    return final_link
+    return result_link
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
