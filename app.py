@@ -43,22 +43,28 @@ def get_final_link(link):
 # Hàm xử lý liên kết
 def process_link(message):
     parts = message.split(" ")
-    text = " ".join(part for part in parts if not part.startswith("http"))
-    link = next((part for part in parts if part.startswith("https://s.shopee.vn")), None)
+    text_parts = []
+    result_links = []
 
-    if link is None:
+    for part in parts:
+        if part.startswith("https://s.shopee.vn"):
+            final_url = get_final_link(part)
+
+            # Chỉ giữ lại tên miền và đường dẫn của link cuối cùng
+            origin_link = final_url.split("?")[0]  # Bỏ đi các tham số sau '?'
+            
+            # Tạo liên kết cuối
+            result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17305270177&sub_id=huong"
+            result_links.append(result_link)
+        else:
+            text_parts.append(part)
+
+    if not result_links:
         return "Vui lòng nhập link bắt đầu bằng https://s.shopee.vn, những link khác gửi thẳng vào nhóm => https://zalo.me/g/rycduw016"
 
-    # Lấy link cuối cùng
-    final_url = get_final_link(link)
-
-    # Chỉ giữ lại tên miền và đường dẫn của link cuối cùng
-    origin_link = final_url.split("?")[0]  # Bỏ đi các tham số sau '?'
-    
-    # Tạo liên kết cuối
-    result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17305270177&sub_id=huong"
-    
-    return f"{text} {result_link}"
+    # Kết hợp văn bản và các liên kết kết quả
+    response_text = " ".join(text_parts) + " " + " ".join(result_links)
+    return response_text.strip()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
