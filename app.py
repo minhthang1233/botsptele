@@ -48,13 +48,15 @@ def process_link(link):
 
     # Phân tích URL và loại bỏ các tham số không cần thiết
     parsed_url = urllib.parse.urlparse(final_url)
-    filtered_query = urllib.parse.parse_qs(parsed_url.query)
 
-    # Chỉ giữ lại tham số 'origin_link'
-    new_query = 'origin_link=' + urllib.parse.quote(parsed_url.path)
+    # Tạo lại link với tên miền
+    origin_link = f"https://shopee.vn{parsed_url.path}"
     
+    # Mã hóa lại link
+    encoded_origin_link = urllib.parse.quote(origin_link)
+
     # Tạo liên kết cuối
-    result_link = f"https://shope.ee/an_redir?{new_query}&affiliate_id=17385530062&sub_id=1review"
+    result_link = f"https://shope.ee/an_redir?origin_link={encoded_origin_link}&affiliate_id=17385530062&sub_id=1review"
     
     return result_link
 
