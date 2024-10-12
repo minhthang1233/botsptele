@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
 import requests
-import urllib.parse
 import os
-import re
 
 app = Flask(__name__)
 
@@ -16,8 +14,8 @@ def webhook():
         chat_id = update['message']['chat']['id']
         message_text = update['message'].get('text', '')
 
-        # Kiểm tra và xử lý liên kết
-        response_text = process_message(message_text)
+        # Gọi hàm để xử lý liên kết
+        response_text = process_link(message_text)
 
         # Gửi phản hồi về Telegram
         send_message(chat_id, response_text)
@@ -42,41 +40,25 @@ def get_final_link(link):
     except requests.exceptions.RequestException as e:
         return str(e)  # Trả về lỗi nếu có
 
-# Hàm xử lý tin nhắn
-def process_message(message):
-    # Tìm kiếm liên kết trong tin nhắn
-    link = extract_link(message)
+# Hàm xử lý liên kết
+def process_link(message):
+    parts = message.split(" ")
+    text = " ".join(part for part in parts if not part.startswith("http"))
+    link = next((part for part in parts if part.startswith("https://s.shopee.vn")), None)
 
-    if link:
-        # Kiểm tra tên miền của liên kết
-        if "s.shopee.vn" in link:
-            final_url = get_final_link(link)
-            # Tạo liên kết mới
-            new_link = create_redirect_link(final_url)
-            # Kết hợp văn bản gốc với liên kết mới
-            return message.replace(link, new_link)
-        else:
-            return "Vui lòng nhập đúng link là link sản phẩm."
-    else:
-        return message  # Nếu không có link, trả lại tin nhắn gốc
+    if link is None:
+        return "Vui lòng nhập đúng link là link sản phẩm"
 
-# Hàm tạo liên kết mới
-def create_redirect_link(final_url):
-    # Phân tích URL và loại bỏ các tham số không cần thiết
-    parsed_url = urllib.parse.urlparse(final_url)
+    # Lấy link cuối cùng
+    final_url = get_final_link(link)
+
+    # Chỉ giữ lại tên miền và đường dẫn của link cuối cùng
+    origin_link = final_url.split("?")[0]  # Bỏ đi các tham số sau '?'
     
-    # Giữ lại tên miền
-    origin_link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
-
-    # Tạo liên kết cuối với đường dẫn được mã hóa
-    result_link = f"https://shope.ee/an_redir?origin_link={urllib.parse.quote(origin_link)}&affiliate_id=17305270177&sub_id=huong"
-    return result_link
-
-# Hàm trích xuất liên kết từ tin nhắn
-def extract_link(message):
-    # Sử dụng regex để tìm link trong tin nhắn
-    urls = re.findall(r'(https?://[^\s]+)', message)
-    return urls[0] if urls else None  # Trả về liên kết đầu tiên hoặc None nếu không tìm thấy
+    # Tạo liên kết cuối
+    result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17385530062&sub_id=1review"
+    
+    return f"{text} {result_link}"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
