@@ -24,7 +24,8 @@ def webhook():
 
 # Hàm gửi tin nhắn đến bot Telegram
 def send_message(chat_id, text):
-    url = f"https://api.telegram.org/bot7725120534:AAF_NpkDpwYx0b3ritpvvjM3LbaUPayvlCA/sendMessage"
+    url = f"https://api.telegram.org/bot7725120534:AAF_NpkDpwYx0b3ritpvvjM3LbaUPayvlCA
+/sendMessage"
     payload = {
         "chat_id": chat_id,
         "text": text
@@ -43,8 +44,7 @@ def get_final_link(link):
 # Hàm xử lý liên kết
 def process_link(message):
     parts = message.split(" ")
-    text_parts = []
-    result_links = []
+    response_parts = []  # Danh sách để lưu các phần kết quả
 
     for part in parts:
         if part.startswith("https://s.shopee.vn"):
@@ -55,16 +55,17 @@ def process_link(message):
             
             # Tạo liên kết cuối
             result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17305270177&sub_id=huong"
-            result_links.append(result_link)
+            response_parts.append(result_link)
         else:
-            text_parts.append(part)
+            response_parts.append(part)  # Giữ nguyên văn bản
 
-    if not result_links:
+    # Kết hợp các phần kết quả
+    response_text = " ".join(response_parts)
+
+    if any(part.startswith("https://s.shopee.vn") for part in parts):
+        return response_text.strip()
+    else:
         return "Vui lòng nhập link bắt đầu bằng https://s.shopee.vn, những link khác gửi thẳng vào nhóm => https://zalo.me/g/rycduw016"
-
-    # Kết hợp văn bản và các liên kết kết quả
-    response_text = " ".join(text_parts) + " " + " ".join(result_links)
-    return response_text.strip()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
