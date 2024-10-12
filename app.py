@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
 import urllib.parse
+import os
 
 app = Flask(__name__)
 
@@ -45,11 +46,15 @@ def process_link(link):
     # Lấy link cuối cùng
     final_url = get_final_link(link)
 
-    # Mã hóa liên kết
-    encoded_link = urllib.parse.quote(final_url)
+    # Phân tích URL và loại bỏ các tham số không cần thiết
+    parsed_url = urllib.parse.urlparse(final_url)
+    filtered_query = urllib.parse.parse_qs(parsed_url.query)
 
+    # Chỉ giữ lại tham số 'origin_link'
+    new_query = 'origin_link=' + urllib.parse.quote(parsed_url.path)
+    
     # Tạo liên kết cuối
-    result_link = f"https://shope.ee/an_redir?origin_link={encoded_link}&affiliate_id=17385530062&sub_id=1review"
+    result_link = f"https://shope.ee/an_redir?{new_query}&affiliate_id=17385530062&sub_id=1review"
     
     return result_link
 
