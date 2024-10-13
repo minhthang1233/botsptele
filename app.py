@@ -15,7 +15,7 @@ def webhook():
         message_text = update['message'].get('text', '')
 
         # Gọi hàm để xử lý liên kết
-        response_text = process_link(message_text)
+        response_text = process_links(message_text)
 
         # Gửi phản hồi về Telegram
         send_message(chat_id, response_text)
@@ -40,31 +40,32 @@ def get_final_link(link):
     except requests.exceptions.RequestException as e:
         return str(e)  # Trả về lỗi nếu có
 
-# Hàm xử lý liên kết
-def process_link(message):
+# Hàm xử lý nhiều liên kết
+def process_links(message):
     parts = message.split(" ")
-    response_parts = []  # Danh sách để lưu các phần kết quả
-
+    converted_message = []
+    
     for part in parts:
-        if part.startswith("https://s.shopee.vn"):
-            final_url = get_final_link(part)
-
-            # Chỉ giữ lại tên miền và đường dẫn của link cuối cùng
-            origin_link = final_url.split("?")[0]  # Bỏ đi các tham số sau '?'
-            
-            # Tạo liên kết cuối
-            result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17305270177&sub_id=huong"
-            response_parts.append(result_link)
+        # Nếu không phải là liên kết bắt đầu bằng s.shopee.vn hoặc shope.ee
+        if not (part.startswith("https://s.shopee.vn") or part.startswith("https://shope.ee")):
+            converted_message.append(part)
         else:
-            response_parts.append(part)  # Giữ nguyên văn bản
-
-    # Kết hợp các phần kết quả
-    response_text = " ".join(response_parts)
-
-    if any(part.startswith("https://s.shopee.vn") for part in parts):
-        return response_text.strip()
-    else:
-        return "Vui lòng nhập link bắt đầu bằng https://s.shopee.vn, những link khác gửi thẳng vào nhóm => https://zalo.me/g/rycduw016"
+            # Lấy link cuối cùng
+            final_url = get_final_link(part)
+            if part.startswith("https://s.shopee.vn"):
+                origin_link = final_url.split("?")[0]  # Bỏ đi các tham số sau '?'
+                result_link = f"https://shope.ee/an_redir?origin_link={origin_link}&affiliate_id=17305270177&sub_id=huong"
+            else:
+                # Trả về link shope.ee với định dạng yêu cầu
+                result_link = f"https://shope.ee/an_redir?origin_link={final_url}&affiliate_id=17305270177&sub_id=huong"
+                
+            converted_message.append(result_link)
+    
+    # Nếu không có liên kết hợp lệ
+    if not any(link.startswith("https://s.shopee.vn") or link.startswith("https://shope.ee") for link in parts):
+        return "Vui lòng nhập link bắt đầu bằng s.shopee.vn hoặc shope.ee. Những link khác gửi thẳng vào nhóm => https://zalo.me/g/rycduw016"
+    
+    return " ".join(converted_message)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
